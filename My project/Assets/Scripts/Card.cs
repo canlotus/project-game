@@ -6,8 +6,10 @@ public class Card : MonoBehaviour
 {
     public Image backFace; // Kapalý yüz
     public Image frontFace; // Açýk yüz
-    private bool isFlipped = false; // Kartýn çevrilip çevrilmediðini takip eder
     public Action<Card> OnCardFlipped; // Kart çevrildiðinde tetiklenecek olay
+
+    private bool isFlipped = false; // Kartýn çevrilip çevrilmediðini takip eder
+    private bool isMatched = false; // Kartýn eþleþip eþleþmediðini takip eder
 
     public void SetCardFace(Sprite frontSprite)
     {
@@ -19,23 +21,34 @@ public class Card : MonoBehaviour
         return frontFace.sprite;
     }
 
+    public bool IsFlipped()
+    {
+        return isFlipped;
+    }
+
     public void Flip()
     {
-        if (isFlipped)
-        {
-            // Kartý kapat
-            backFace.enabled = true;
-            frontFace.enabled = false;
-        }
-        else
-        {
-            // Kartý aç
-            backFace.enabled = false;
-            frontFace.enabled = true;
+        if (isMatched || isFlipped) return; // Eþleþmiþ veya zaten açýk olan kartlarý çevirme
 
-            // Kart açýldýðýnda olayý tetikle
-            OnCardFlipped?.Invoke(this);
+        isFlipped = true;
+        backFace.enabled = false;
+        frontFace.enabled = true;
+
+        if (OnCardFlipped != null)
+        {
+            OnCardFlipped(this); // Kart çevrildiðinde GameController'da bu olay tetiklenir
         }
-        isFlipped = !isFlipped; // Çevirme durumunu deðiþtir
+    }
+
+    public void SetMatched()
+    {
+        isMatched = true; // Kart eþleþti olarak iþaretlenir
+    }
+
+    public void Close()
+    {
+        isFlipped = false;
+        backFace.enabled = true;
+        frontFace.enabled = false;
     }
 }

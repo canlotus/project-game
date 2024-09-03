@@ -3,22 +3,21 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
-    public Image cardImage; // Kartýn yüzünü gösterecek olan Image komponenti
-    public Sprite backFaceSprite; // Kapalý yüz için kullanýlacak sprite
-    public Sprite frontFaceSprite; // Açýk yüz için kullanýlacak sprite
-
+    public Image backFace; // Kapalý yüzü gösterecek Image
+    public Image frontFace; // Açýk yüzü gösterecek Image
     private bool isFlipped = false; // Kartýn çevrilip çevrilmediðini takip eder
 
     void Start()
     {
-        // Baþlangýçta kapalý yüzü göster
-        cardImage.sprite = backFaceSprite;
+        // Kartýn baþlangýçta kapalý yüzünü göster
+        backFace.enabled = true;
+        frontFace.enabled = false;
     }
 
+    // Kartýn açýk yüzünü ayarlayan fonksiyon
     public void SetCardFace(Sprite frontSprite)
     {
-        // Açýk yüz sprite'ýný ayarla
-        frontFaceSprite = frontSprite;
+        frontFace.sprite = frontSprite;
     }
 
     public void Flip()
@@ -26,12 +25,14 @@ public class Card : MonoBehaviour
         if (isFlipped)
         {
             // Kartý kapat
-            cardImage.sprite = backFaceSprite;
+            backFace.enabled = true;
+            frontFace.enabled = false;
         }
         else
         {
             // Kartý aç
-            cardImage.sprite = frontFaceSprite;
+            backFace.enabled = false;
+            frontFace.enabled = true;
         }
         isFlipped = !isFlipped; // Çevirme durumunu deðiþtir
     }

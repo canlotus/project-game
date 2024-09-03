@@ -1,0 +1,17 @@
+# Unity Göz Ardı Kuralları
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Ll]ogs/
+[Uu]serSettings/
+
+# Visual Studio Göz Ardı Kuralları
+.vscode/
+*.csproj
+*.sln
+*.userprefs
+
+# Diğer Göz Ardı Edilecek Dosyalar
+.DS_Store
+Thumbs.db

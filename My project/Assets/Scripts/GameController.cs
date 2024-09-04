@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement; // SceneManager için gerekli
 
 public class GameController : MonoBehaviour
 {
@@ -152,6 +153,9 @@ public class GameController : MonoBehaviour
             firstCard.SetMatched();
             secondCard.SetMatched();
 
+            // Eþleþme sesi çal
+            AudioManager.instance.PlayMatchSound();
+
             // Particle effect tetikle
             int firstCardIndex = createdCards.IndexOf(firstCard.gameObject);
             int secondCardIndex = createdCards.IndexOf(secondCard.gameObject);
@@ -160,14 +164,14 @@ public class GameController : MonoBehaviour
             {
                 particleEffects[firstCardIndex].gameObject.SetActive(true);
                 particleEffects[firstCardIndex].Play();
-                StartCoroutine(DeactivateParticleEffect(particleEffects[firstCardIndex], 2f));
+                StartCoroutine(DeactivateParticleEffect(particleEffects[firstCardIndex], 1f));
             }
 
             if (secondCardIndex >= 0 && secondCardIndex < particleEffects.Length)
             {
                 particleEffects[secondCardIndex].gameObject.SetActive(true);
                 particleEffects[secondCardIndex].Play();
-                StartCoroutine(DeactivateParticleEffect(particleEffects[secondCardIndex], 2f));
+                StartCoroutine(DeactivateParticleEffect(particleEffects[secondCardIndex], 1f));
             }
 
             matchCount++;
@@ -178,6 +182,15 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(0.5f); // Mesajý gösterdikten sonra bekle
             Destroy(firstCard.gameObject);
             Destroy(secondCard.gameObject);
+
+            // Tüm kartlar eþleþtiyse oyunu sonlandýr
+            if (matchCount * 2 == createdCards.Count) // Tüm kartlar eþleþmiþse
+            {
+                yield return new WaitForSeconds(0.5f); // Kýsa bir bekleme
+                AudioManager.instance.PlayGameEndSound(); // Oyun bitiþ sesini çal
+                yield return new WaitForSeconds(AudioManager.instance.gameEndSound.length); // Sesin süresi kadar bekle
+                SceneManager.LoadScene("MainScene"); // Ana menüye dön
+            }
         }
         else
         {
@@ -185,6 +198,10 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(0.5f); // Mesajý gösterdikten sonra bekle
             firstCard.Close();
             secondCard.Close();
+
+            // Eþleþmeme sesi çal
+            AudioManager.instance.PlayNoMatchSound();
+
             resultText.text = "No match!";
             resultText.color = Color.red;
         }

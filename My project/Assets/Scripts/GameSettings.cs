@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class GameSettings : MonoBehaviour
+public class MainMenuController : MonoBehaviour
 {
     public static int numberOfCards = 8; // Varsayýlan easy modda 8 kart
     public Button easyButton;

@@ -21,11 +21,6 @@ public class Card : MonoBehaviour
         return frontFace.sprite;
     }
 
-    public bool IsFlipped()
-    {
-        return isFlipped;
-    }
-
     public void Flip()
     {
         if (isMatched || isFlipped) return; // Eþleþmiþ veya zaten açýk olan kartlarý çevirme

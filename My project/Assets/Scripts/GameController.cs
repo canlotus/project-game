@@ -7,18 +7,19 @@ public class GameController : MonoBehaviour
 {
     public GameObject cardPrefab;
     public Sprite[] cardFrontSprites;
-    public Text scoreText;
+    public Text matchText;
+    public Text attemptsText;
     public Text resultText;
 
     private List<Vector2> cardPositions = new List<Vector2>();
     private List<GameObject> createdCards = new List<GameObject>();
-    private int score = 0;
+    private int matchCount = 0;
+    private int attemptsCount = 0;
     private Card firstCard, secondCard;
-    private bool canFlip = false; // Baþlangýçta kartlar çevrilemez
+    private bool canFlip = false;
 
     void Start()
     {
-        scoreText.text = "Skor: " + score;
         InitializeCardPositions();
         GenerateCards();
         StartCoroutine(ShowAndHideAllCards());
@@ -57,8 +58,7 @@ public class GameController : MonoBehaviour
 
         for (int i = 0; i < cardPositions.Count; i++)
         {
-            GameObject newCard = Instantiate(cardPrefab, Vector3.zero, Quaternion.identity, transform);
-            newCard.transform.localPosition = cardPositions[i]; // Kartlarý sabit konumlara yerleþtir
+            GameObject newCard = Instantiate(cardPrefab, cardPositions[i], Quaternion.identity, transform);
             Card cardScript = newCard.GetComponent<Card>();
             cardScript.SetCardFace(cardsToUse[i]);
             cardScript.OnCardFlipped = OnCardFlipped;
@@ -68,26 +68,24 @@ public class GameController : MonoBehaviour
 
     IEnumerator ShowAndHideAllCards()
     {
-        // Tüm kartlarý aç
         foreach (var card in createdCards)
         {
             card.GetComponent<Card>().Flip();
         }
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
 
-        // Tüm kartlarý kapa
         foreach (var card in createdCards)
         {
             card.GetComponent<Card>().Close();
         }
 
-        canFlip = true; // Oyuncunun kartlarý çevirebilmesi için etkin hale getir
+        canFlip = true;
     }
 
     void OnCardFlipped(Card card)
     {
-        if (!canFlip) return; // Kartlar baþlangýçta kapanana kadar bekle
+        if (!canFlip) return;
 
         if (firstCard == null)
         {
@@ -96,7 +94,7 @@ public class GameController : MonoBehaviour
         else if (secondCard == null)
         {
             secondCard = card;
-            canFlip = false; // Üçüncü bir kart açýlmasýný engellemek için çevirmeyi devre dýþý býrak
+            canFlip = false;
             StartCoroutine(CheckCards());
         }
     }
@@ -107,34 +105,32 @@ public class GameController : MonoBehaviour
 
         if (firstCard.GetCardSprite() == secondCard.GetCardSprite())
         {
-            // Eþleþme bulundu
             firstCard.SetMatched();
             secondCard.SetMatched();
             Destroy(firstCard.gameObject);
             Destroy(secondCard.gameObject);
-            UpdateScore(1);
+            matchCount++;
             resultText.text = "Eþleþme bulundu!";
+            resultText.color = Color.green;
         }
         else
         {
-            // Eþleþme yoksa kartlarý kapat
             firstCard.Close();
             secondCard.Close();
             resultText.text = "Eþleþme yok!";
+            resultText.color = Color.red;
         }
+
+        attemptsCount++;
+        matchText.text = "Eþleþmeler: " + matchCount;
+        attemptsText.text = "Denemeler: " + attemptsCount;
 
         yield return new WaitForSeconds(1f);
         resultText.text = "";
 
         firstCard = null;
         secondCard = null;
-        canFlip = true; // Yeni tur için tekrar kart çevirmeye izin ver
-    }
-
-    void UpdateScore(int amount)
-    {
-        score += amount;
-        scoreText.text = "Skor: " + score;
+        canFlip = true;
     }
 
     void Shuffle(List<Sprite> list)

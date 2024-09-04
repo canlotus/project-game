@@ -21,6 +21,11 @@ public class Card : MonoBehaviour
         return frontFace.sprite;
     }
 
+    public bool IsFlipped()
+    {
+        return isFlipped;
+    }
+
     public void Flip()
     {
         if (isMatched || isFlipped) return; // Eþleþmiþ veya zaten açýk olan kartlarý çevirme
@@ -31,13 +36,13 @@ public class Card : MonoBehaviour
 
         if (OnCardFlipped != null)
         {
-            OnCardFlipped(this); // Kart çevrildiðinde GameController'da bu olay tetiklenir
+            OnCardFlipped(this);
         }
     }
 
     public void SetMatched()
     {
-        isMatched = true; // Kart eþleþti olarak iþaretlenir
+        isMatched = true;
     }
 
     public void Close()
@@ -45,5 +50,11 @@ public class Card : MonoBehaviour
         isFlipped = false;
         backFace.enabled = true;
         frontFace.enabled = false;
+    }
+
+    // Týklanabilirliði kontrol eden metod
+    public void SetInteractable(bool state)
+    {
+        GetComponent<Button>().interactable = state;
     }
 }
